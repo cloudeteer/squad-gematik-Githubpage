@@ -14,6 +14,7 @@ Cloudetair Chat ist eine DSGVO-konforme KI-Plattform mit umfassenden Funktionen 
 
 Entwickelt von der **Cloudeteer GmbH**, dem spezialisierten Cloud-Only-Dienstleister aus Hamburg (ISO 27001 zertifiziert).
 
+
 ## Features der Website
 
 - ✅ **Static Export**: Optimiert für GitHub Pages Deployment
