@@ -37,11 +37,6 @@ export const Footer = () => {
                   Über uns
                 </a>
               </li>
-              <li>
-                <a href="#videos" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Videos & Demos
-                </a>
-              </li>
             </ul>
           </div>
 
