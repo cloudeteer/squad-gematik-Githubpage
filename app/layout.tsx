@@ -3,27 +3,27 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: 'Olivebytes - European AI & Open-Core Solutions',
+  title: 'Cloudeteer - Chat',
   description: 'Transparente, erklärbare KI-Lösungen für EU-Souveränität, Mittelstand und öffentliche Verwaltung. Europäische Projektgesellschaft für nachhaltige Digitalisierung.',
   keywords: ['AI', 'KI', 'Open Source', 'EU', 'Europe', 'Explainable AI', 'XAI', 'GDPR'],
-  authors: [{ name: 'Olivebytes' }],
-  creator: 'Olivebytes',
-  publisher: 'Olivebytes',
-  metadataBase: new URL('https://olivebytes.org'),
+  authors: [{ name: 'Cloudeteer' }],
+  creator: 'Cloudeteer',
+  publisher: 'Cloudeteer',
+  metadataBase: new URL('https://www.cloudeteer.de/'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Olivebytes - European AI & Open-Core Solutions',
+    title: 'Cloudeteer - Chat',
     description: 'Transparente, erklärbare KI-Lösungen für EU-Souveränität, Mittelstand und öffentliche Verwaltung.',
-    url: 'https://olivebytes.org',
-    siteName: 'Olivebytes',
+    url: 'https://www.cloudeteer.de/',
+    siteName: 'Cloudeteer - Chat',
     locale: 'de_DE',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Olivebytes - European AI & Open-Core Solutions',
+    title: 'Cloudeteer - Chat',
     description: 'Transparente, erklärbare KI-Lösungen für EU-Souveränität, Mittelstand und öffentliche Verwaltung.',
   },
   robots: {

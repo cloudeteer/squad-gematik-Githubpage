@@ -78,7 +78,7 @@ Die Seite ist für GitHub Pages vorkonfiguriert:
 2. Gehe zu **Settings** > **Pages** > **Source**, und wähle **GitHub Actions**
 3. Die Seite wird automatisch gebaut und deployed
 
-Die Seite ist verfügbar unter: `https://<username>.github.io/website-olivebytes/`
+Die Seite ist verfügbar unter: `https://<username>.github.io/website-cloudeteer-chat/`
 
 ## Implementierte Anforderungen
 
@@ -128,4 +128,4 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## License
 
-© 2025 Olivebytes. All rights reserved.
+© 2025 cloudeteer-chat. All rights reserved.

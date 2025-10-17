@@ -4,14 +4,14 @@
 
 ### ✅ Vollständig umgesetzt
 
-Alle Inhalte der GitHub Pages Website wurden von "Olivebytes" auf "Cloudetair Chat" (Cloudeteer GmbH) umgestellt.
+Alle Inhalte der GitHub Pages Website wurden von "cloudeteer-chat" auf "Cloudetair Chat" (Cloudeteer GmbH) umgestellt.
 
 ---
 
 ## Geänderte Komponenten
 
 ### 1. Hero Section (`components/sections/hero.tsx`)
-- **ALT**: Olivebytes - Europäische AI & Open-Core Solutions
+- **ALT**: cloudeteer-chat - Europäische AI & Open-Core Solutions
 - **NEU**: Cloudetair Chat - Sichere, DSGVO-konforme KI-Plattform
 - Farbschema: Grün/Blau → Blau/Indigo
 - Branding: "☁️ Powered by Cloudeteer GmbH"
@@ -37,7 +37,7 @@ Alle Inhalte der GitHub Pages Website wurden von "Olivebytes" auf "Cloudetair Ch
 - Support: Deutschsprachig, Kundenportal, 2nd-Level
 
 ### 3. About Section (`components/sections/about.tsx`)
-- **ALT**: Olivebytes als europäische Projektgesellschaft
+- **ALT**: cloudeteer-chat als europäische Projektgesellschaft
 - **NEU**: Cloudeteer GmbH Cloud-Expertise vorgestellt
 - 4 Kernwerte: Cloud Expertise, ISO 27001, Effizienz & Agilität, Trusted Advisor
 - Firmendaten: Brandshofer Deich 68, Hamburg
@@ -55,10 +55,10 @@ Alle Inhalte der GitHub Pages Website wurden von "Olivebytes" auf "Cloudetair Ch
 ### 5. CTA Section (`components/sections/cta.tsx`)
 - **ALT**: "Transparente, erklärbare KI"
 - **NEU**: "Sichere KI-Plattform" mit DSGVO-Fokus
-- Kontakt-E-Mail: info@olivebytes.org → legal@cloudeteer.de
+- Kontakt-E-Mail: info@cloudeteer-chat.org → legal@cloudeteer.de
 
 ### 6. Footer (`components/footer.tsx`)
-- **ALT**: Olivebytes Branding
+- **ALT**: cloudeteer-chat Branding
 - **NEU**: Cloudetair Chat + Cloudeteer GmbH
 - Vollständige Adresse: Brandshofer Deich 68, 20539 Hamburg
 - ISO 27001 Zertifizierung
@@ -80,7 +80,7 @@ Alle Inhalte der GitHub Pages Website wurden von "Olivebytes" auf "Cloudetair Ch
 - Kontakt: legal@cloudeteer.de, +49 40 271644-00
 
 ### 8. Navbar (`components/navbar.tsx`)
-- **ALT**: Olivebytes Logo, Links zu "Projekte"
+- **ALT**: cloudeteer-chat Logo, Links zu "Projekte"
 - **NEU**: Cloudetair Chat Logo, Links zu "Funktionen" und "Videos"
 - Kontakt-E-Mail: legal@cloudeteer.de
 - Farbschema: Blau/Indigo

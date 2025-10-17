@@ -1,15 +1,15 @@
-# Technische und gestalterische Konzeption für Olivebytes & ASTRA Landing Pages
+# Technische und gestalterische Konzeption für cloudeteer-chat & ASTRA Landing Pages
 
 ## 1. Monorepo vs. Multi-Repo Strategie
 
-**Vergleich:** Für die zwei Landing Pages (Olivebytes und ASTRA) gibt es zwei grundlegende Strategien: ein Monorepo (gemeinsames Repository) oder getrennte Repositories (Multi-Repo). Die folgende Tabelle vergleicht beide Ansätze:
+**Vergleich:** Für die zwei Landing Pages (cloudeteer-chat und ASTRA) gibt es zwei grundlegende Strategien: ein Monorepo (gemeinsames Repository) oder getrennte Repositories (Multi-Repo). Die folgende Tabelle vergleicht beide Ansätze:
 
 | **Kriterium**              | **Monorepo (gemeinsam)**                                      | **Multi-Repo (getrennt)**                                |
 |---------------------------|---------------------------------------------------------------|----------------------------------------------------------|
 | **Code-/UI-Sharing**      | Einfaches Teilen von Komponenten, Design-System und Konfiguration zwischen beiden Seiten. Keine Duplikation von Code. | Komponenten/Design müssen dupliziert oder in ein drittes gemeinsames Paket ausgelagert werden. Pflege von Konsistenz aufwändiger. |
 | **Entwicklungs-Workflow** | Einheitliche Umgebung: einrichten, linten, testen in einem Rutsch. Änderungen am gemeinsamen Design wirken sofort auf beide Seiten. Nutzung von Workspaces (z.B. npm oder Turborepo) möglich für modulare Struktur. | Separater Entwicklungsaufwand pro Projekt. Änderungen am Design-System erfordern Synchronisation in beiden Repos (Gefahr von Abweichungen). |
 | **Deployment**            | Komplexer: Ein Repository müsste zwei statische Sites ausliefern. Möglich via zwei **GitHub Pages** Branches oder durch Deployment eines Teilprojekts auf externes Repo. Erfordert sorgfältige CI/CD-Konfiguration. | Einfacher: Jedes Repo deployt eigenständig auf GitHub Pages mit eigenem Custom Domain Setup. Standard-Pipeline pro Projekt möglich. |
-| **Domains**               | Schwieriger: Ein Repo kann nur einen Pages-Custom-Domain-Eintrag haben. Lösung: z.B. eine Site über `gh-pages` Branch und die zweite über ein *ausgelagertes* Subtree-Repo deployen. | Klar getrennt: Olivebytes.org und astra.olivebytes.org sind jeweils einem Repo zugeordnet, mit jeweils eigenem Pages-Setup und Custom Domain. |
+| **Domains**               | Schwieriger: Ein Repo kann nur einen Pages-Custom-Domain-Eintrag haben. Lösung: z.B. eine Site über `gh-pages` Branch und die zweite über ein *ausgelagertes* Subtree-Repo deployen. | Klar getrennt: cloudeteer-chat.org und astra.cloudeteer-chat.org sind jeweils einem Repo zugeordnet, mit jeweils eigenem Pages-Setup und Custom Domain. |
 | **Wartung & Skalierung**  | Zentralisierung: nur ein Repo updaten (z.B. Dependency-Updates, CI-Config). Aber evtl. etwas größere Komplexität im Repo (zwei App-Pakete verwalten). | Isolierung: Änderungen an einer Seite betreffen die andere nicht. Allerdings doppelter Pflegeaufwand (z.B. Abhängigkeiten aktualisieren, CI pflegen in beiden Repos). |
 
 **Empfehlung:** Aufgrund der starken Gemeinsamkeiten (Design, Komponenten, Technologie) ist ein **Monorepo mit zwei Next.js-Projekten** sinnvoll, um Duplikation zu vermeiden und ein konsistentes Erscheinungsbild sicherzustellen. Die Monorepo-Strategie erlaubt es, ein zentrales UI-/Design-System zu definieren, das beide Sites nutzen. Für das Deployment kann dennoch eine getrennte Ausspielung konfiguriert werden (siehe Abschnitt 5). Falls das Deployment zu kompliziert würde, wäre als Alternative ein *Multi-Repo mit gemeinsamem UI-Package* denkbar, jedoch erhöht dies die Komplexität in der Synchronisierung.
@@ -20,10 +20,10 @@
 repository-root/
 ├── package.json (Workspaces für apps/* und packages/*, gemeinsame Dev-Dependencies)
 ├── apps/
-│   ├── olivebytes-site/
+│   ├── cloudeteer-chat-site/
 │   │   ├── next.config.mjs
 │   │   ├── public/      (statische Assets, z.B. CNAME, Bilder, Fonts)
-│   │   ├── src/         (App-Router Pages, Components, etc. für Olivebytes)
+│   │   ├── src/         (App-Router Pages, Components, etc. für cloudeteer-chat)
 │   │   └── ...          
 │   └── astra-site/
 │       ├── next.config.mjs
@@ -35,7 +35,7 @@ repository-root/
     └── ...              (weitere gemeinsame Pakete, z.B. translations, content-Modelle)
 ```
 
-In dieser Struktur befinden sich zwei Next.js Apps unter `apps/`, die beide auf Next.js 15 basieren und via App Router ihre Seiten generieren. Unter `packages/ui` kann das extrahierte UI-System (Farben, Buttons, Layout-Komponenten etc.) liegen, das per Import in beiden Apps genutzt wird. Beide Apps können ihre jeweils spezifischen Inhalte und Konfigurationen haben (z.B. ASTRA hat evtl. andere Seiten als Olivebytes), greifen aber auf das gemeinsame UI und evtl. gemeinsame Utility-Funktionen zurück.
+In dieser Struktur befinden sich zwei Next.js Apps unter `apps/`, die beide auf Next.js 15 basieren und via App Router ihre Seiten generieren. Unter `packages/ui` kann das extrahierte UI-System (Farben, Buttons, Layout-Komponenten etc.) liegen, das per Import in beiden Apps genutzt wird. Beide Apps können ihre jeweils spezifischen Inhalte und Konfigurationen haben (z.B. ASTRA hat evtl. andere Seiten als cloudeteer-chat), greifen aber auf das gemeinsame UI und evtl. gemeinsame Utility-Funktionen zurück.
 
 ## 2. Next.js Konfiguration für SSG/Export
 
@@ -46,7 +46,7 @@ Beide Landing Pages sollen **statisch generiert** und als reine HTML/JS/CSS ohne
 In der Next.js Konfiguration setzen wir `output: 'export'`, damit Next beim Build einen statischen Export erzeugt (ähnlich dem früheren `next export`). Außerdem müssen wir Next.js mitteilen, dass wir keine Image-Optimierungen serverseitig benötigen und ggf. andere Einschränkungen von static export beachten:
 
 ```js
-// apps/olivebytes-site/next.config.mjs
+// apps/cloudeteer-chat-site/next.config.mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',        // Statischer Export (SSG)
@@ -55,7 +55,7 @@ const nextConfig = {
   },
   // Optional: Basis-Pfad setzen, falls das Projekt nicht auf Domain-Root liegt.
   // basePath: process.env.SITE === 'astra' ? '/astra' : '/',
-  // (Für astra.olivebytes.org vermutlich nicht nötig, da eigene Domain)
+  // (Für astra.cloudeteer-chat.org vermutlich nicht nötig, da eigene Domain)
 };
 export default nextConfig;
 ```
@@ -70,7 +70,7 @@ Erläuterungen:
 
 Wir benötigen mindestens Deutsch (DE) und Englisch (EN) als Sprachen. Da die built-in i18n-Funktion nicht mit static export funktioniert, verwenden wir **Sub-Path Routing**: Jede Sprache erhält einen eigenen URL-Pfad (z.B. `/de/...` und `/en/...`). Dies lässt sich im **App Router** über einen dynamischen Segment-Ordner `[locale]` umsetzen:
 
-**Struktur in `src/app` (Beispiel für Olivebytes-Seite):**
+**Struktur in `src/app` (Beispiel für cloudeteer-chat-Seite):**
 
 ```
 src/app/
@@ -108,7 +108,7 @@ out/
 └── ...                   (assets etc.)
 ```
 
-Dadurch sind beide Sprachen unter getrennten Pfaden abrufbar, was SEO-freundlich ist (sprachgetrennte URLs). Die `de.html` und `en.html` dienen als Fallbacks, die Besucher auf die Ordner umleiten (dies geschieht automatisch durch Next’s Exportmechanismus). **Wichtig:** Auf GitHub Pages werden diese Ordner als Verzeichnisse mit `index.html` unterstützt, sodass z.B. `https://olivebytes.org/de` die deutsche Seite lädt.
+Dadurch sind beide Sprachen unter getrennten Pfaden abrufbar, was SEO-freundlich ist (sprachgetrennte URLs). Die `de.html` und `en.html` dienen als Fallbacks, die Besucher auf die Ordner umleiten (dies geschieht automatisch durch Next’s Exportmechanismus). **Wichtig:** Auf GitHub Pages werden diese Ordner als Verzeichnisse mit `index.html` unterstützt, sodass z.B. `https://cloudeteer-chat.org/de` die deutsche Seite lädt.
 
 Für Verlinkungen zwischen den Sprachen oder Unterseiten nutzt man relative Links oder Next’s `<Link>` mit `href="/de/kontakt"` etc. – diese funktionieren im statischen Modus, solange die Seiten existieren.
 
@@ -127,15 +127,15 @@ Bilder können wir bedenkenlos in Next.js nutzen, aber einige Anpassungen sind n
 Da wir auf **GitHub Pages** hosten, gibt es einige technische Rahmenbedingungen:
 - **Keine Server-Side Features:** Alles muss zur Buildzeit entschieden werden. Wir haben das berücksichtigt, indem wir SSG und static routing einsetzen (keine SSR oder API-Routen von Next). Funktionen wie Middleware sind nicht verfügbar, was aber dank statischer Pfade auch nicht nötig ist (z.B. Sprachauswahl über Subdomain könnten wir sonst per Middleware lösen, hier aber fest via Pfad).
 - **Routen/404:** GitHub Pages kann nur vorhandene Dateien ausliefern. Deshalb sollten wir einen `404.html` mit exportieren, damit unbekannte URLs eine sinnvolle Fehlerseite zeigen. Next erzeugt standardmäßig `404.html` aus einer `app/[locale]/not-found.tsx` oder globalen `not-found.tsx` Datei, die wir bereitstellen können.
-- **Kein echtes Fallback Routing:** Wenn etwa jemand auf `olivebytes.org/irgendwas` geht, liefert Pages starr 404 (oder den redirect wenn wir manuell einen einbauen). In unserem Fall sind alle relevanten Pfade bekannt. Für ASTRA-Seite (falls unter Subdomain) gilt das gleiche.
-- **BasePath bei Project Pages:** (Für den Fall, dass wir doch z.B. astra.olivebytes.org als *Projektseite* in einem user/org Repo hosten) – Dann müsste Next mit `basePath` arbeiten, z.B. `basePath: '/astra'`. Da wir aber Custom Domains direkt nutzen, entfällt das: Jede Domain kann als Root dienen, kein zusätzlicher Pfad nötig.
+- **Kein echtes Fallback Routing:** Wenn etwa jemand auf `cloudeteer-chat.org/irgendwas` geht, liefert Pages starr 404 (oder den redirect wenn wir manuell einen einbauen). In unserem Fall sind alle relevanten Pfade bekannt. Für ASTRA-Seite (falls unter Subdomain) gilt das gleiche.
+- **BasePath bei Project Pages:** (Für den Fall, dass wir doch z.B. astra.cloudeteer-chat.org als *Projektseite* in einem user/org Repo hosten) – Dann müsste Next mit `basePath` arbeiten, z.B. `basePath: '/astra'`. Da wir aber Custom Domains direkt nutzen, entfällt das: Jede Domain kann als Root dienen, kein zusätzlicher Pfad nötig.
 - **Asset Pfade:** Alle internen Links, Skript- und CSS-Pfade werden relativ zur Domain generiert, was Next im Export normalerweise richtig macht. Es lohnt sich, `crossOrigin` auf `'anonymous'` zu lassen oder wegzulassen, damit z.B. Fonts geladen werden können, und sicherzustellen, dass die `<base href>` im HTML (falls verwendet) korrekt ist. In der Regel kann man Next vertrauen, solange `basePath` stimmt oder nicht notwendig ist.
 
 Zusammenfassend stellen wir sicher, dass unsere Next.js-Konfiguration den statischen Export unterstützt, i18n über statische Routen löst und mit den Besonderheiten von GitHub Pages harmoniert (z.B. ungehashte Asset-Pfade, CNAME-Datei im Output, etc.). Im nächsten Schritt passen wir das Design System an.
 
 ## 3. UI/Design System Adaption
 
-Wir bauen das Design der Landing Pages auf dem bestehenden **FundMe-Frontend-Prototyp** (`jmkrieg/fundme-frontend`) auf. Dieses Projekt nutzt ein modernes **Design System mit Tailwind CSS und shadcn/ui** Komponenten. Ziel ist es, Farben, Typografie und wiederverwendbare UI-Bausteine daraus **wiederzuverwenden und anzupassen**. So erreichen wir ein konsistentes Erscheinungsbild für Olivebytes und ASTRA, ohne von Grund auf neu gestalten zu müssen.
+Wir bauen das Design der Landing Pages auf dem bestehenden **FundMe-Frontend-Prototyp** (`jmkrieg/fundme-frontend`) auf. Dieses Projekt nutzt ein modernes **Design System mit Tailwind CSS und shadcn/ui** Komponenten. Ziel ist es, Farben, Typografie und wiederverwendbare UI-Bausteine daraus **wiederzuverwenden und anzupassen**. So erreichen wir ein konsistentes Erscheinungsbild für cloudeteer-chat und ASTRA, ohne von Grund auf neu gestalten zu müssen.
 
 ### Farbpalette und Design-Tokens
 
@@ -152,8 +152,8 @@ Der FundMe-Prototyp definiert Farbtokens via CSS Custom Properties in `globals.c
 
 **Dark Mode:** Das Design-System unterstützt Dark Mode via `.dark` Klasse mit eigenen Variablen. Für die Landing Pages könnten wir eine Dunkelmodus-Option anbieten (nicht zwingend, aber als Accessibilty-Plus). Da Next und das Designsystem (shadcn + next-themes) dies vorsehen, werden wir es mit minimalem Aufwand aktivieren (ThemeToggle in Header).
 
-**Adaption für Olivebytes/ASTRA:** Wir können die obigen neutrales Farbschema beibehalten, da es modern und seriös wirkt (passend für B2B/öffentl. Sektor). Allerdings könnte man **Akzentfarben** an die Marken anpassen:
-- *Olivebytes:* Der Name suggeriert evtl. **Olivegrün** als Markenfarbe. Falls erwünscht, könnten wir `--primary` oder `--accent` leicht in einen grünlichen Ton ändern. Ohne konkretes Branding-Guide belassen wir es zunächst beim neutralen Scheme, um Fokus auf Inhalte zu legen.
+**Adaption für cloudeteer-chat/ASTRA:** Wir können die obigen neutrales Farbschema beibehalten, da es modern und seriös wirkt (passend für B2B/öffentl. Sektor). Allerdings könnte man **Akzentfarben** an die Marken anpassen:
+- *cloudeteer-chat:* Der Name suggeriert evtl. **Olivegrün** als Markenfarbe. Falls erwünscht, könnten wir `--primary` oder `--accent` leicht in einen grünlichen Ton ändern. Ohne konkretes Branding-Guide belassen wir es zunächst beim neutralen Scheme, um Fokus auf Inhalte zu legen.
 - *ASTRA:* Könnte eine eigene Farbnuance bekommen (z.B. ein Blau oder Türkis, um Technologie und Zukunft zu symbolisieren). Denkbar wäre, ASTRA-Seite per Design-Token leicht zu variieren – z.B. einen anderen `--primary` Wert nur in ASTRA-App setzen. Das lässt sich via Tailwind Theme oder zur Not per CSS-Override in astra spezifisch machen.
 
 Für die Planung gehen wir davon aus, beide Sites nutzen **das gleiche Grundtheme** (für Konsistenz mit Corporate Identity). Feinjustierung der Primärfarbe je Seite wäre optional später.
@@ -224,19 +224,19 @@ Für die Landing Pages identifizieren wir wiederverwendbare **Section-Komponente
 - **Feature Grid**: Abschnitt, der mehrere Leistungsmerkmale/Features in übersichtlicher Form darstellt – typischerweise ein Grid (z.B. 3 Spalten) mit Icons oder Illustrationen und kurzen Beschreibungen pro Feature.
 - **CTA Section**: Ein auffälliger Abschnitt am Ende (oder zwischendrin) mit einem **Call-To-Action**, z.B. „Jetzt Kontakt aufnehmen“ oder „Demo anfordern“. Meist bestehend aus einem kurzen Text + Button.
 - **Navbar & Footer**: Navigationsleiste (vermutlich einfach gehalten, z.B. Logo + Sprache wechseln + evtl. ein Link) und Footer mit Impressum/Datenschutz Links, vielleicht Adresse. In FundMe gab es ein `<Navbar>` und `<FooterSection>` bereits – diese können wir anpassen.
-- **Logo Wall / Partner Section**: FundMe hatte `LogoSection` (Ticker mit Logos). Für Olivebytes könnte man Logos von Partnern/Referenzen zeigen, sofern vorhanden. Für ASTRA evtl. Logos von Technologien (z.B. „built with OSS“ logos) oder Förderern.
+- **Logo Wall / Partner Section**: FundMe hatte `LogoSection` (Ticker mit Logos). Für cloudeteer-chat könnte man Logos von Partnern/Referenzen zeigen, sofern vorhanden. Für ASTRA evtl. Logos von Technologien (z.B. „built with OSS“ logos) oder Förderern.
 - **Showcase**: In FundMe gab es eine `<Showcase>` und `<Pricing>` Sektion. Für unsere Seiten:
-  - Olivebytes (Unternehmen) – ein Showcase könnte Projekte oder Use-Cases zeigen, oder ein allgemeines „Was machen wir“ in visueller Form.
+  - cloudeteer-chat (Unternehmen) – ein Showcase könnte Projekte oder Use-Cases zeigen, oder ein allgemeines „Was machen wir“ in visueller Form.
   - ASTRA (Produkt) – ein Showcase könnte ein Screenshot oder Ablaufdiagramm der Plattform sein.
 - **Pricing**: Für ASTRA wäre zu klären, ob Pricing-Infos öffentlich sind (z.B. SaaS-Angebot). Da ASTRA als Open-Core für MSP/Behörden positioniert ist, gibt es evtl. kein klassisches Preismodell auf der Seite (eher individuelle Angebote). Daher könnte man den Pricing-Abschnitt weglassen oder umwidmen (z.B. „ASTRA Editionen: Community vs Enterprise“ Übersicht).
 - **FAQ** (optional): Für komplexe Themen (Erklärbare KI, etc.) wäre ein FAQ-Sektion denkbar, aber nur falls Content vorhanden.
-- **Kontaktformular** (optional): Evtl. auf Olivebytes-Seite ein Formular für Projektanfragen. Aber siehe Punkt 8 – Formulare ohne eigenen Server – hier müssten wir Lösungen finden (z.B. Drittanbieterdienste). Man könnte auch einfach Kontakt-Links (Mailto) nutzen.
+- **Kontaktformular** (optional): Evtl. auf cloudeteer-chat-Seite ein Formular für Projektanfragen. Aber siehe Punkt 8 – Formulare ohne eigenen Server – hier müssten wir Lösungen finden (z.B. Drittanbieterdienste). Man könnte auch einfach Kontakt-Links (Mailto) nutzen.
 
 Wir erstellen diese Komponenten als React-Komponenten, idealerweise **als Teil des gemeinsamen Design Systems**, aber mit spezifischem Content pro Seite. Praktisch könnte jede Seite eine Art Page-Composer sein, der die Sektionen in passender Reihenfolge einbindet (ähnlich wie FundMe’s `page.tsx` das tat). Der Inhalt (Texte/Bilder) wird pro Seite bzw. Sprache geliefert, während das Styling und Layout in der Komponente steckt.
 
-Beispiel: **HeroSection Komponente** – in `packages/ui/components/Hero.tsx` definieren wir ein generisches Hero-Layout mit Props für `headline`, `subline`, `ctaLabel`, `ctaHref`, `image` etc. Die Olivebytes-Seite importiert diese und füllt sie mit dem deutsch/englischen Text für Olivebytes; die ASTRA-Seite füllt sie mit ASTRA-Texten. Vorteil: Einheitliches Aussehen (Schriftgrößen, Abstände, Button-Stil gleich).
+Beispiel: **HeroSection Komponente** – in `packages/ui/components/Hero.tsx` definieren wir ein generisches Hero-Layout mit Props für `headline`, `subline`, `ctaLabel`, `ctaHref`, `image` etc. Die cloudeteer-chat-Seite importiert diese und füllt sie mit dem deutsch/englischen Text für cloudeteer-chat; die ASTRA-Seite füllt sie mit ASTRA-Texten. Vorteil: Einheitliches Aussehen (Schriftgrößen, Abstände, Button-Stil gleich).
 
-Ähnlich verfahren wir mit FeatureGrid: Eine Komponente, der man eine Liste von Feature-Objekten (Icon + Titel + Beschreibung) übergibt. So können Olivebytes und ASTRA jeweils ihre Feature-Liste einfügen, aber die Darstellung (Icon circle, responsive Grid) bleibt gleich.
+Ähnlich verfahren wir mit FeatureGrid: Eine Komponente, der man eine Liste von Feature-Objekten (Icon + Titel + Beschreibung) übergibt. So können cloudeteer-chat und ASTRA jeweils ihre Feature-Liste einfügen, aber die Darstellung (Icon circle, responsive Grid) bleibt gleich.
 
 Wir nutzen hierbei Tailwind und ggf. Shadcn/UI-Primitive:
 - Buttons können wir aus FundMe übernehmen (`<Button>` Component in `ui/button.tsx` war vermutlich vorhanden im Prototyp). Dadurch haben wir einen stilisierten Button mit Variants (Primary, Secondary etc.). Den CTA-Button im Hero nutzen wir dann als `<Button variant="primary">Los geht’s</Button>` o.Ä.
@@ -306,12 +306,12 @@ Beim Launch der Seiten müssen wir Suchmaschinenoptimierung, datenschutzkonforme
 
 Eine **SEO-Checkliste** für statische Landing Pages:
 - **Saubere URLs & Sprachsuffixe:** Durch die `/de/` und `/en/` Pfade haben wir bereits sprachspezifische URLs. Wir sollten einen `<link rel="alternate" hreflang="x">` für DE und EN setzen, damit Google die Zusammengehörigkeit erkennt. Next-Intl kann das evtl. automatisch, sonst manuell im `<head>`.
-- **Seitentitel und Meta Description:** Für jede Seite definieren wir passende `<title>` und `<meta name="description">`. Im Next App Router können wir pro Seite `export const metadata = { title: "...", description: "..." }` setzen. Z.B. Olivebytes DE: title = "Olivebytes – Erklärbare KI & Open-Core", description = "Olivebytes ist eine europäische Projektgesellschaft für erklärbare KI-Systeme..." (ca. 150 Zeichen). Diese Infos erscheinen dann im generierten HTML `<head>` und sind für Google relevant.
+- **Seitentitel und Meta Description:** Für jede Seite definieren wir passende `<title>` und `<meta name="description">`. Im Next App Router können wir pro Seite `export const metadata = { title: "...", description: "..." }` setzen. Z.B. cloudeteer-chat DE: title = "cloudeteer-chat – Erklärbare KI & Open-Core", description = "cloudeteer-chat ist eine europäische Projektgesellschaft für erklärbare KI-Systeme..." (ca. 150 Zeichen). Diese Infos erscheinen dann im generierten HTML `<head>` und sind für Google relevant.
 - **Strukturierte Überschriften:** Nur ein `<h1>` pro Seite (z.B. im Hero der Produkt-/Firmename + Slogan), darunter sinnvolle `<h2>` für Abschnittstitel (z.B. „Unsere Leistungen“, „ASTRA Features“) usw. Das hilft Suchmaschinen beim Inhaltsscan.
 - **Open Graph / Social Tags:** Wir erstellen Open Graph Meta-Tags, damit beim Teilen in sozialen Medien schöne Vorschaukarten erscheinen. D.h. `<meta property="og:title">`, `og:description`, `og:image`, `og:url` pro Sprache. Next 15 bietet dafür die Möglichkeit, im `metadata` Objekt ein `openGraph` Feld zu definieren. Wir könnten ein repräsentatives Bild definieren (z.B. Firmenlogo auf dunklem Grund oder ein Hero-Ausschnitt). Ebenso `twitter:card` Meta.
-- **Sitemap.xml und robots.txt:** Next.js kann optional beim Export eine `sitemap.xml` generieren, oder wir fügen manuell eine an. Aufgrund geringer Seitenzahl kann man eine statische Sitemap anlegen (listet olivebytes.org/de/, /en/, astra.olivebytes.org/de/, /en/ jeweils). Auch ein `robots.txt` mit `Allow: /` und dem Link zur Sitemap wird bereitgestellt. Diese Dateien legen wir im `public/` Ordner ab, sodass sie unter `/robots.txt` und `/sitemap.xml` ausgeliefert werden.
+- **Sitemap.xml und robots.txt:** Next.js kann optional beim Export eine `sitemap.xml` generieren, oder wir fügen manuell eine an. Aufgrund geringer Seitenzahl kann man eine statische Sitemap anlegen (listet cloudeteer-chat.org/de/, /en/, astra.cloudeteer-chat.org/de/, /en/ jeweils). Auch ein `robots.txt` mit `Allow: /` und dem Link zur Sitemap wird bereitgestellt. Diese Dateien legen wir im `public/` Ordner ab, sodass sie unter `/robots.txt` und `/sitemap.xml` ausgeliefert werden.
 - **Performance & Best Practices:** Eine schnelle Seite rankt besser. Durch unseren performance-bewussten Ansatz (wenig JS, optimierte Assets) erzielen wir gute Lighthouse-Performancewerte. Darauf achten wir im QA (siehe Abschnitt 8).
-- **Local Business Markup (optional):** Für Olivebytes (falls relevant als Unternehmen) könnte man schema.org Markup im Impressum oder Footer einbinden (Adresse, Firmierung). Für ASTRA evtl. Product schema (Name, description). Das sind Bonuspunkte, aber optional.
+- **Local Business Markup (optional):** Für cloudeteer-chat (falls relevant als Unternehmen) könnte man schema.org Markup im Impressum oder Footer einbinden (Adresse, Firmierung). Für ASTRA evtl. Product schema (Name, description). Das sind Bonuspunkte, aber optional.
 
 ### DSGVO-konforme Analytics
 
@@ -320,9 +320,9 @@ Wir möchten Besucherzahlen messen, aber **ohne Tracking-Sünden**. Ein Vorschla
 - **Hosting:** Wir könnten Plausible Cloud verwenden (gehostet in EU) oder sogar selbst hosten (Open Source). Für unseren Zweck genügt wahrscheinlich die Cloud-Version mit einfacher Integration via `<script>` Tag.
 - **Integration:** Man fügt im `<head>` oder Ende `<body>` einen Script-Snippet von Plausible ein. Z.B.:
   ```html
-  <script defer data-domain="olivebytes.org" src="https://plausible.io/js/script.js"></script>
+  <script defer data-domain="cloudeteer-chat.org" src="https://plausible.io/js/script.js"></script>
   ```
-  Bzw. für astra.olivebytes.org ebenso (Plausible kann mehrere Domains tracken oder man initiiert es zweimal). 
+  Bzw. für astra.cloudeteer-chat.org ebenso (Plausible kann mehrere Domains tracken oder man initiiert es zweimal). 
 - **Kein Cookiebanner nötig:** Da Plausible kein Nutzeridentifikations-Tracking macht, **bedarf es keiner Einwilligung** nach aktuellen Richtlinien (Information in Datenschutzerklärung reicht).
 - **Alternativen:** Matomo (ehem. Piwik) wäre eine andere Open-Source-Analytics-Lösung – jedoch komplexer und oft mit Cookies, daher Plausible bevorzugt. Google Analytics ist wegen Datenübertragung in die USA problematisch und würde Cookie-Consent erfordern, daher ausgeschlossen.
 
@@ -345,7 +345,7 @@ Als deutsches/europäisches Unternehmen ist ein **Impressum** Pflicht (Angaben �
 ### Weitere rechtliche Aspekte
 
 - **Cookies/Consent:** Da wir planmäßig keine Cookies setzen (außer evtl. ein Darkmode-Preference in LocalStorage oder ein rein technisches Cookie für Sidebar-Status, was aber wohl nicht vorhanden sein wird außer wir übernehmen Sidebar-Code) und Analytics ohne Cookies nutzen, können wir auf ein Cookie-Banner verzichten. Sollten wir doch mal ein Drittanbieter-Embed (z.B. YouTube Video) integrieren, müssten wir neu evaluieren. Aktuell aber nicht geplant.
-- **Barrierefreiheitserklärung:** Für öffentliche Stellen in EU (falls Olivebytes Auftraggeber in öffentl. Hand ist) wäre eine Barrierefreiheitserklärung nötig. Olivebytes ist aber wohl ein Unternehmen, keine Behörde, somit nicht verpflichtend. Dennoch: Wir streben WCAG AA an, was praktisch diese Anforderungen abdeckt. Man könnte auf der Seite irgendwo angeben „Wir bemühen uns um Barrierefreiheit“ etc., aber das ist eher freiwillig.
+- **Barrierefreiheitserklärung:** Für öffentliche Stellen in EU (falls cloudeteer-chat Auftraggeber in öffentl. Hand ist) wäre eine Barrierefreiheitserklärung nötig. cloudeteer-chat ist aber wohl ein Unternehmen, keine Behörde, somit nicht verpflichtend. Dennoch: Wir streben WCAG AA an, was praktisch diese Anforderungen abdeckt. Man könnte auf der Seite irgendwo angeben „Wir bemühen uns um Barrierefreiheit“ etc., aber das ist eher freiwillig.
 - **Tracking Opt-Out:** Auch wenn Plausible datenschutzkonform ist, kann man in der Datenschutzerklärung einen Opt-Out-Link anbieten (Plausible bietet Option, per URL-Parameter Tracking für einen User zu deaktivieren). Dies ist nice-to-have.
 - **Hosting-Standort:** GitHub Pages hostet die Seiten vermutlich auf weltweiten CDNs (Fastly, mit PoPs auch in EU). Für DSGVO sollte das okay sein, da es keine personenbezogenen Daten involviert beim reinen Seitenaufruf. Dennoch ein Satz in der Datenschutzerklärung, dass GitHub (USA) als Hoster fungiert, schadet nicht, inkl. Hinweis auf entsprechenden Auftragsverarbeiter-Deal GitHub/Microsoft. Das ist formell, aber gehört oft dazu.
 
@@ -353,34 +353,34 @@ Durch diese Maßnahmen stellen wir sicher, dass die Seiten suchmaschinenfreundli
 
 ## 5. Deployment auf GitHub Pages
 
-Beide Seiten sollen via **GitHub Pages** mit Custom Domains veröffentlicht werden – `olivebytes.org` (Apex Domain) und `astra.olivebytes.org` (Subdomain). Der Deployment-Prozess umfasst DNS-Konfiguration und eine CI-Pipeline, die den statischen Export in die Pages-Umgebung stellt.
+Beide Seiten sollen via **GitHub Pages** mit Custom Domains veröffentlicht werden – `cloudeteer-chat.org` (Apex Domain) und `astra.cloudeteer-chat.org` (Subdomain). Der Deployment-Prozess umfasst DNS-Konfiguration und eine CI-Pipeline, die den statischen Export in die Pages-Umgebung stellt.
 
 ### DNS-Konfiguration für Custom Domains
 
-**Olivebytes.org (Apex-Domain):** Für die Hauptdomain richten wir A-Records ein, die auf GitHub Pages zeigen. GitHub stellt vier IP-Adressen bereit, die hinter Pages liegen:
+**cloudeteer-chat.org (Apex-Domain):** Für die Hauptdomain richten wir A-Records ein, die auf GitHub Pages zeigen. GitHub stellt vier IP-Adressen bereit, die hinter Pages liegen:
 ```
 185.199.108.153  
 185.199.109.153  
 185.199.110.153  
 185.199.111.153
 ```
-Wir erstellen im DNS-Provider je einen A-Record von `olivebytes.org` auf jede dieser vier IPs (für Ausfallsicherheit). Zusätzlich kann man AAAA-Records (IPv6) analog hinzufügen, das ist optional aber zukunftssicher:
+Wir erstellen im DNS-Provider je einen A-Record von `cloudeteer-chat.org` auf jede dieser vier IPs (für Ausfallsicherheit). Zusätzlich kann man AAAA-Records (IPv6) analog hinzufügen, das ist optional aber zukunftssicher:
 ```
 2606:50c0:8000::153  
 2606:50c0:8001::153  
 2606:50c0:8002::153  
 2606:50c0:8003::153
 ```
-So wird jeder Aufruf von `olivebytes.org` an GitHub’s Pages-Server geleitet.
+So wird jeder Aufruf von `cloudeteer-chat.org` an GitHub’s Pages-Server geleitet.
 
-**ASTRA Subdomain:** Für `astra.olivebytes.org` verwenden wir einen CNAME-Record. Dieser CNAME soll auf die Pages-Hostname des entsprechenden GitHub Pages Projekts zeigen. Wenn ASTRA als separate GitHub Pages Site in einem Repo deployt wird, ist die Pages-Default-URL meist `<user>.github.io/<repo>`:
+**ASTRA Subdomain:** Für `astra.cloudeteer-chat.org` verwenden wir einen CNAME-Record. Dieser CNAME soll auf die Pages-Hostname des entsprechenden GitHub Pages Projekts zeigen. Wenn ASTRA als separate GitHub Pages Site in einem Repo deployt wird, ist die Pages-Default-URL meist `<user>.github.io/<repo>`:
 - Angenommen, wir deployen ASTRA auf `jmkrieg.github.io/astra` (Projektseiten), dann setzen wir `CNAME astra -> jmkrieg.github.io.` (ohne repo-Name laut GitHub Empfehlung).
-- Falls wir ASTRA im selben Repo wie Olivebytes auf einer anderen Branch deployen, wäre es komplexer – vermutlich werden wir ASTRA auf **einem eigenen Repo oder Branch** hosten, das dann auch eine Pages-Instanz hat. Für das Prinzip nehmen wir an, ASTRA hat z.B. ein Repo `olivebytes-astra` mit Pages. Dann CNAME von `astra.olivebytes.org` auf `olivebytes-astra.pages.dev` (bzw. wieder `jmkrieg.github.io` falls es unter dem gleichen User läuft).
-- Wichtig: In den GitHub Pages Einstellungen des ASTRA-Pages-Repos muss `astra.olivebytes.org` als Custom Domain eingetragen sein, damit GitHub weiß, dass es Anfragen dafür bedienen soll. Gleiches für `olivebytes.org` im Hauptrepo.
+- Falls wir ASTRA im selben Repo wie cloudeteer-chat auf einer anderen Branch deployen, wäre es komplexer – vermutlich werden wir ASTRA auf **einem eigenen Repo oder Branch** hosten, das dann auch eine Pages-Instanz hat. Für das Prinzip nehmen wir an, ASTRA hat z.B. ein Repo `cloudeteer-chat-astra` mit Pages. Dann CNAME von `astra.cloudeteer-chat.org` auf `cloudeteer-chat-astra.pages.dev` (bzw. wieder `jmkrieg.github.io` falls es unter dem gleichen User läuft).
+- Wichtig: In den GitHub Pages Einstellungen des ASTRA-Pages-Repos muss `astra.cloudeteer-chat.org` als Custom Domain eingetragen sein, damit GitHub weiß, dass es Anfragen dafür bedienen soll. Gleiches für `cloudeteer-chat.org` im Hauptrepo.
 
 **CNAME-Dateien:** Bei GitHub Pages (wenn man es via Branch/docs ausliefert) ist es üblich, eine `CNAME` Datei im Root des Pages-Inhalts zu haben, die die Domain enthält. Da wir über Actions publishen, können wir:
-- Im Olivebytes-Build eine `CNAME` Datei mit Inhalt `olivebytes.org` generieren (oder in `public/` legen, damit sie beim Export in `out/` erscheint).
-- Ebenso für ASTRA `astra.olivebytes.org` in dessen public.
+- Im cloudeteer-chat-Build eine `CNAME` Datei mit Inhalt `cloudeteer-chat.org` generieren (oder in `public/` legen, damit sie beim Export in `out/` erscheint).
+- Ebenso für ASTRA `astra.cloudeteer-chat.org` in dessen public.
 GitHub erkennt diese Datei und verbindet sie mit dem Setting. (Bei Actions basierter Deploy kann man auch im Settings einstellen ohne Datei, aber die Datei schadet nicht).
 
 Zusammengefasst:
@@ -394,15 +394,15 @@ Wir richten pro Site eine **GitHub Actions Workflow** ein, der bei Push ins Main
 Für das Monorepo könnte es einen gemeinsamen Workflow geben, aber der Aufwand zwei Seiten in ein Repo zu packen, würde uns evtl. zwingen, mit zwei Branches zu arbeiten. Alternativ nutzen wir **zwei separate Repos** – dann hat jedes Repo seinen eigenen Workflow. Zur Veranschaulichung zeigen wir zwei YAML-Workflows (einer pro Site), falls sie getrennt gebaut werden:
 
 <details>
-<summary><strong>.github/workflows/olivebytes-pages.yml</strong> – Deployment für olivebytes.org</summary>
+<summary><strong>.github/workflows/cloudeteer-chat-pages.yml</strong> – Deployment für cloudeteer-chat.org</summary>
 
 ```yaml
-name: Deploy Olivebytes Site
+name: Deploy cloudeteer-chat Site
 
 on:
   push:
     paths:
-      - 'apps/olivebytes-site/**'   # Trigger bei Änderungen an Olivebytes-Seite
+      - 'apps/cloudeteer-chat-site/**'   # Trigger bei Änderungen an cloudeteer-chat-Seite
       - 'packages/ui/**'           # und Änderungen am gemeinsamen UI
       - 'package.json'             # (Abhängigkeiten)
     branches: [ main ]
@@ -428,16 +428,16 @@ jobs:
       - name: Install deps
         run: npm install
 
-      - name: Build Olivebytes site
-        run: npm run build:olivebytes 
-        # In package.json, "build:olivebytes": "npm run build --workspace apps/olivebytes-site"
-        # Dieser Befehl sollte next build + next export für Olivebytes ausführen.
+      - name: Build cloudeteer-chat site
+        run: npm run build:cloudeteer-chat 
+        # In package.json, "build:cloudeteer-chat": "npm run build --workspace apps/cloudeteer-chat-site"
+        # Dieser Befehl sollte next build + next export für cloudeteer-chat ausführen.
 
       - name: Upload Pages artifact
         id: upload
         uses: actions/upload-pages-artifact@v1
         with:
-          path: apps/olivebytes-site/out
+          path: apps/cloudeteer-chat-site/out
 
   deploy:
     runs-on: ubuntu-latest
@@ -453,7 +453,7 @@ jobs:
 </details>
 
 <details>
-<summary><strong>.github/workflows/astra-pages.yml</strong> – Deployment für astra.olivebytes.org</summary>
+<summary><strong>.github/workflows/astra-pages.yml</strong> – Deployment für astra.cloudeteer-chat.org</summary>
 
 ```yaml
 name: Deploy ASTRA Site
@@ -504,20 +504,20 @@ jobs:
 
 Erläuterung der Workflows:
 - Sie triggern bei jedem Push auf `main`, aber jeweils nur, wenn relevante Dateien verändert wurden (so bauen wir nicht unnötig beide, wenn nur eine Site geändert wurde).
-- **Build Job:** Checkt den Code aus, richtet Node 18 ein, installiert Dependencies (Caching aktiviert um schneller zu sein), und führt das Build-Skript aus. Wir haben hier angenommen, dass `npm run build:olivebytes` intern z.B. `pnpm --filter olivebytes-site build` macht oder ähnlich – je nach Monorepo-Tool. Wichtig ist, dass am Ende ein `out/` Ordner mit static files entsteht. Danach nutzt es `actions/upload-pages-artifact@v1`, um das Ergebnis für den Deploy-Schritt verfügbar zu machen.
+- **Build Job:** Checkt den Code aus, richtet Node 18 ein, installiert Dependencies (Caching aktiviert um schneller zu sein), und führt das Build-Skript aus. Wir haben hier angenommen, dass `npm run build:cloudeteer-chat` intern z.B. `pnpm --filter cloudeteer-chat-site build` macht oder ähnlich – je nach Monorepo-Tool. Wichtig ist, dass am Ende ein `out/` Ordner mit static files entsteht. Danach nutzt es `actions/upload-pages-artifact@v1`, um das Ergebnis für den Deploy-Schritt verfügbar zu machen.
 - **Deploy Job:** Nutzt `actions/deploy-pages@v1` um das Artefakt tatsächlich auf den GitHub Pages Branch zu schieben. Dieser Action abstrahiert den Push – wir müssen uns nicht um `gh-pages` Branch manuell kümmern. Er greift auf das zuvor hochgeladene Artifact (`page_url` Output) zurück. Der `environment: github-pages` Teil ist eine spezielle Kennzeichnung, die GitHub nutzt (das reservierte Environment `github-pages` hat besonderen Zweck).
 
 Nach erfolgreichem Lauf wird GitHub Pages die neuen Dateien veröffentlichen. Bei Verwendung dieser Actions wird auch **kein commit im Repo** erzeugt (die Dateien leben im GitHub Pages Deploy außerhalb des Git-Verlaufs).
 
-**Branching-Strategie:** Wir haben oben auf `main` getriggert. Man kann auch einen Workflow so einrichten, dass z.B. Pushes auf `main` = Olivebytes live, und ASTRA auf `astra` Branch = astra.olivebytes.org. Je nach Orga könnte man getrennte Branches nutzen, aber das verkompliziert Collaboration (man entwickelt dann auf zwei Branches parallel). Daher in unserem Plan: beide auf `main`, aber streng getriggert nach Pfad. So kann man in einem Repo arbeiten.
+**Branching-Strategie:** Wir haben oben auf `main` getriggert. Man kann auch einen Workflow so einrichten, dass z.B. Pushes auf `main` = cloudeteer-chat live, und ASTRA auf `astra` Branch = astra.cloudeteer-chat.org. Je nach Orga könnte man getrennte Branches nutzen, aber das verkompliziert Collaboration (man entwickelt dann auf zwei Branches parallel). Daher in unserem Plan: beide auf `main`, aber streng getriggert nach Pfad. So kann man in einem Repo arbeiten.
 
 **Alternative (Multi-Repo):** Wenn wir doch separate Repos nutzen, dann enthält jedes Repo nur seine Site. Dann sind Workflows noch einfacher (kein Path-Filter nötig, einfach bei push to main immer build+deploy). Und Domain Settings pro Repo. Dieser Weg eliminiert alle möglichen Konflikte, dafür muss man UI-Änderungen in zwei Repos pflegen. Wir gehen mit Monorepo + Action oben, aber das kann der Realität angepasst werden.
 
 **Custom Domain via Actions:** Früher musste man die CNAME Datei manuell committen. Mit dem neuen Actions-Flow ist es ausreichend, im Repository einmal die Domain einzutragen (dann erzeugt GH intern eine config). Wir legen dennoch die CNAME-Datei in `public/` ab, damit sie im `out` landet – nur zur Sicherheit und Nachvollziehbarkeit.
 
 **DNS Checks:** Nach dem ersten Deployment wird GitHub ein Zertifikat für die Domains ausstellen (dauert ca. <10min). In der Zwischenzeit sollten die DNS-Einträge schon aktiv sein, sonst kann es Wartezeit geben. Nach Deployment einmal testen:
-- http://olivebytes.org sollte redirect auf https://olivebytes.org (Enforce HTTPS aktiviert) und die Seite anzeigen.
-- http://astra.olivebytes.org analog.
+- http://cloudeteer-chat.org sollte redirect auf https://cloudeteer-chat.org (Enforce HTTPS aktiviert) und die Seite anzeigen.
+- http://astra.cloudeteer-chat.org analog.
 - Im GitHub Pages Settings wird angezeigt, ob die Domain verbunden und zertifiziert ist.
 
 ### Branches vs. Environments
@@ -532,10 +532,10 @@ Die Inhalte der beiden Landing Pages müssen in zwei Sprachen gepflegt werden. W
 
 ### Content-Modell Ansatz
 
-**a) JSON/YAML als Headless Content:** Wir legen für jede Seite und Sprache eine Datenstruktur an, z.B. in `apps/olivebytes-site/content/`. Etwa `olivebytes.de.json` und `olivebytes.en.json`, plus analog für ASTRA. Darin definieren wir Schlüssel für jeden Textbaustein. Zum Beispiel:
+**a) JSON/YAML als Headless Content:** Wir legen für jede Seite und Sprache eine Datenstruktur an, z.B. in `apps/cloudeteer-chat-site/content/`. Etwa `cloudeteer-chat.de.json` und `cloudeteer-chat.en.json`, plus analog für ASTRA. Darin definieren wir Schlüssel für jeden Textbaustein. Zum Beispiel:
 
 ```json
-// olivebytes.de.json (Ausschnitt)
+// cloudeteer-chat.de.json (Ausschnitt)
 {
   "hero": {
     "title": "Europäische KI-Projektgesellschaft",
@@ -554,9 +554,9 @@ Die Inhalte der beiden Landing Pages müssen in zwei Sprachen gepflegt werden. W
 }
 ```
 
-Die Komponenten (HeroSection, FeatureGridSection etc.) bekommen dann diese Inhalte als Props. Für die EN-Version `olivebytes.en.json` stehen die übersetzten Strings:
+Die Komponenten (HeroSection, FeatureGridSection etc.) bekommen dann diese Inhalte als Props. Für die EN-Version `cloudeteer-chat.en.json` stehen die übersetzten Strings:
 ```json
-// olivebytes.en.json (Ausschnitt)
+// cloudeteer-chat.en.json (Ausschnitt)
 {
   "hero": {
     "title": "European XAI Project Company",
@@ -585,7 +585,7 @@ Vorteile dieser Struktur:
 **b) MDX-Dateien:** Alternativ können wir pro Sprache eine MDX-Seite schreiben, wo Texte direkt drinstehen. MDX erlaubt aber auch das Einbinden von React-Komponenten. Ein Hybridansatz:
 - Beispiel: `app/[locale]/page.mdx` für Startseite. In der MDX schreiben wir z.B:
   ```mdx
-  # Olivebytes – {locale === 'de' ? 'Europäische KI-Projekte' : 'European AI Projects'}
+  # cloudeteer-chat – {locale === 'de' ? 'Europäische KI-Projekte' : 'European AI Projects'}
   <HeroSection title={content.hero.title} subtitle={content.hero.subtitle} ctaText={content.hero.cta} ... />
 
   ## {locale === 'de' ? 'Unsere Stärken' : 'Our Strengths'}
@@ -599,13 +599,13 @@ Vorteile dieser Struktur:
 
 Wir könnten auch Next-Intl nutzen, was im Prinzip Schlüssel-Value JSON ist. Aber für unser Szenario ist die Custom-Lösung ausreichend und leichter verständlich.
 
-### Beispielinhalte Olivebytes vs. ASTRA
+### Beispielinhalte cloudeteer-chat vs. ASTRA
 
 Um die inhaltliche Ausgestaltung zu planen, hier eine **Gegenüberstellung der Inhalte** beider Seiten (DE und EN):
 
-| **Sektion**      | **Olivebytes (DE)**                                                | **Olivebytes (EN)**                                                | **ASTRA (DE)**                                                   | **ASTRA (EN)**                                                     |
+| **Sektion**      | **cloudeteer-chat (DE)**                                                | **cloudeteer-chat (EN)**                                                | **ASTRA (DE)**                                                   | **ASTRA (EN)**                                                     |
 |------------------|--------------------------------------------------------------------|--------------------------------------------------------------------|------------------------------------------------------------------|--------------------------------------------------------------------|
-| **Hero Titel**   | *„Olivebytes“* – Europäische Projektgesellschaft für erklärbare KI | *“Olivebytes”* – European Project Company for Explainable AI       | *„ASTRA“* – Automatisierung wissensintensiver Dienste            | *“ASTRA”* – Automating Knowledge-Intensive Services                |
+| **Hero Titel**   | *„cloudeteer-chat“* – Europäische Projektgesellschaft für erklärbare KI | *“cloudeteer-chat”* – European Project Company for Explainable AI       | *„ASTRA“* – Automatisierung wissensintensiver Dienste            | *“ASTRA”* – Automating Knowledge-Intensive Services                |
 | **Hero Subtitel**| Transparente KI-Systeme und Open-Core-Produkte für EU-Souveränität, Mittelstand und Verwaltung. | Transparent AI systems and open-core products for EU sovereignty, SMEs and the public sector. | Plattform für rollenbasierte Service Twins, RLHF & Wissensgraphen – gemacht für MSPs, Behörden und KMU. | A platform for role-based service twins, RLHF & knowledge graphs – built for MSPs, governments, and SMEs. |
 | **Hero CTA**     | Mehr erfahren                                                      | Learn more                                                        | Mehr über ASTRA                                                  | Learn about ASTRA                                                 |
 | **Features Sektion Titel** | Unsere Schwerpunkte                                        | Our Focus Areas                                                   | Kernfunktionen von ASTRA                                         | ASTRA Key Features                                                |
@@ -619,14 +619,14 @@ Um die inhaltliche Ausgestaltung zu planen, hier eine **Gegenüberstellung der I
 
 *(Icons sind Vorschläge aus lucide-react, z.B. ShieldCheck (Schild-Haken) für Security/Trust, Users für Rollen/Agenten, MessageCircle für Feedback, Share2 für Vernetzung, Layers für Modularität).*
 
-Die Tabelle zeigt, dass Olivebytes allgemeinere Unternehmenswerte betont (Erklärbarkeit, Souveränität, Open-Core), während ASTRA spezifische **Produktfeatures** auflistet (Service Twins, RLHF, Knowledge Graph etc.). Beide haben entsprechend angepasste Hero-Texte. Das Content-Modell (siehe JSON oben) fängt diese Unterschiede durch die konkreten JSON-Inhalte je Seite ab.
+Die Tabelle zeigt, dass cloudeteer-chat allgemeinere Unternehmenswerte betont (Erklärbarkeit, Souveränität, Open-Core), während ASTRA spezifische **Produktfeatures** auflistet (Service Twins, RLHF, Knowledge Graph etc.). Beide haben entsprechend angepasste Hero-Texte. Das Content-Modell (siehe JSON oben) fängt diese Unterschiede durch die konkreten JSON-Inhalte je Seite ab.
 
 ### Content-Wireframe und Trennung
 
 Wir behalten pro Seite folgende grobe Reihenfolge:
 1. **Hero** (Titel, Subtitle, CTA).
 2. **Features/Focus** (mehrere Bullet-Features evtl. mit Icons).
-3. Evtl. **Zwischensektion**: für Olivebytes könnte das ein Abschnitt *"Warum Olivebytes?"* mit etwas Fließtext oder Zahlen sein; für ASTRA evtl. eine Diagramm-Illustration wie ASTRA funktioniert (könnte als Bild eingebunden werden).
+3. Evtl. **Zwischensektion**: für cloudeteer-chat könnte das ein Abschnitt *"Warum cloudeteer-chat?"* mit etwas Fließtext oder Zahlen sein; für ASTRA evtl. eine Diagramm-Illustration wie ASTRA funktioniert (könnte als Bild eingebunden werden).
 4. **CTA Abschluss** (auffordernder Abschnitt mit Button).
 5. **Footer** (mit Links zu Impressum, Datenschutz, ggf. Social Media oder Email).
 
@@ -642,14 +642,14 @@ Zusammenfassend ermöglicht unser Content-Modell, dass Marketing/Redaktion die T
 
 Da der FundMe-Frontend-Prototyp als Grundlage dient, planen wir die Wiederverwendung relevanter Teile und das Refactoring in Richtung unserer neuen Sites. Die folgende Mapping-Tabelle zeigt, **welche Bestandteile aus FundMe wo im neuen Projekt landen sollen**, inklusive empfohlener Änderungen:
 
-| **FundMe Prototype**                        | **Neue Landing Pages (Olivebytes/ASTRA)**                                | **Refactor-Schritte**                                      |
+| **FundMe Prototype**                        | **Neue Landing Pages (cloudeteer-chat/ASTRA)**                                | **Refactor-Schritte**                                      |
 |---------------------------------------------|-------------------------------------------------------------------------|------------------------------------------------------------|
-| **Design-System (Tailwind + shadcn/ui)**<br/>- Farb-Variablen in `globals.css`<br/>- Shadcn UI Komponenten (Button, Input, etc.)<br/>- Utility-Funktionen `cn()` aus `utils.ts` | **Gemeinsames UI-Paket (`packages/ui`)**<br/>Enthält Theme (Tailwind config, CSS vars) und Basis-UI-Komponenten. Olivebytes und ASTRA importieren z.B. `<Button>` aus diesem Paket. | *Schritt 1:* Extrahiere `src/app/globals.css`, `tailwind.config`, `src/components/ui/*` in ein eigenes Modul. Entferne Business-spezifische UI (z.B. Sidebar, Auth modals) sofern nicht gebraucht. Stelle sicher, dass Variablen wie `--font-geist-sans` auch im neuen Kontext gesetzt werden. |
+| **Design-System (Tailwind + shadcn/ui)**<br/>- Farb-Variablen in `globals.css`<br/>- Shadcn UI Komponenten (Button, Input, etc.)<br/>- Utility-Funktionen `cn()` aus `utils.ts` | **Gemeinsames UI-Paket (`packages/ui`)**<br/>Enthält Theme (Tailwind config, CSS vars) und Basis-UI-Komponenten. cloudeteer-chat und ASTRA importieren z.B. `<Button>` aus diesem Paket. | *Schritt 1:* Extrahiere `src/app/globals.css`, `tailwind.config`, `src/components/ui/*` in ein eigenes Modul. Entferne Business-spezifische UI (z.B. Sidebar, Auth modals) sofern nicht gebraucht. Stelle sicher, dass Variablen wie `--font-geist-sans` auch im neuen Kontext gesetzt werden. |
 | **Fonts (Geist Sans/Mono)**<br/>Lokal in `src/assets/fonts` + Nutzung in `layout.tsx`. | **Fonts im static Assets Ordner**<br/>Identisch einbinden in neuem `layout.tsx` der Sites. | Kopiere den `assets/fonts/Geist` Ordner ins Monorepo (z.B. unter `packages/ui/assets/fonts` oder jeweils in `public/fonts`). Binde die Fonts über `next/font/local` wie gehabt ein. Evtl. Pfade anpassen, da Monorepo-Struktur anders. |
-| **Navbar Komponente** (`<Navbar>` mit evtl. Login/Button) | **Navbar für Landingpage**<br/>Einfach gehalten: Logo links, Sprache rechts, ggf. Menü verbergen. | Übernehme `<Navbar>` Grundstruktur, aber entferne FundMe-spezifische Elemente (Logout, Dashboard Links). Stattdessen statische Links (z.B. "ASTRA" als Link von olivebytes.org oder umgekehrt "Olivebytes Home" Link auf ASTRA-Seite). Implementiere Sprachumschaltung (z.B. zwei kleine Buttons "DE/EN" die zum jeweiligen Pfad wechseln). |
+| **Navbar Komponente** (`<Navbar>` mit evtl. Login/Button) | **Navbar für Landingpage**<br/>Einfach gehalten: Logo links, Sprache rechts, ggf. Menü verbergen. | Übernehme `<Navbar>` Grundstruktur, aber entferne FundMe-spezifische Elemente (Logout, Dashboard Links). Stattdessen statische Links (z.B. "ASTRA" als Link von cloudeteer-chat.org oder umgekehrt "cloudeteer-chat Home" Link auf ASTRA-Seite). Implementiere Sprachumschaltung (z.B. zwei kleine Buttons "DE/EN" die zum jeweiligen Pfad wechseln). |
 | **FooterSection** (`<FooterSection>`) | **Footer**<br/>Mit Impressum, Datenschutz Links, Adresse. | Passe den Footer an: statt generischen FundMe-Inhalten (falls vorhanden) unsere Firma-Daten einfügen. Vielleicht Logo und ©-Jahr, Kontakt-email. |
 | **Hero, LogoSection, Showcase, Pricing, CallToAction** (`src/sections/*`) | **Sections für Landingpage** (HeroSection, FeaturesSection, CTASection etc.) | Übernimm Struktur als Ausgangspunkt: z.B. FundMe Hero hatte vermutlich Bild und Text – adaptier auf unsere Texte. Pricing wird ggf. nicht benötigt: wir können die Komponente aber als Basis für eine evtl. ASTRA Editions-Übersicht nutzen oder weglassen. Remove any internal links (z.B. FundMe "Get Started" CTA -> bei uns "Kontakt"). |
-| **Seiten / Routing**<br/>FundMe hatte `/` als Landing, `/dashboard` etc. | **Neue Seiten**<br/>/de, /en für Olivebytes; /de, /en für ASTRA; statische subpages /impressum etc. | Lösche FundMe-seitige Routen, insbesondere geschützte (Dashboard, etc.). Erstelle neue App Router Strukturen wie in Abschnitt 2 beschrieben. |
+| **Seiten / Routing**<br/>FundMe hatte `/` als Landing, `/dashboard` etc. | **Neue Seiten**<br/>/de, /en für cloudeteer-chat; /de, /en für ASTRA; statische subpages /impressum etc. | Lösche FundMe-seitige Routen, insbesondere geschützte (Dashboard, etc.). Erstelle neue App Router Strukturen wie in Abschnitt 2 beschrieben. |
 | **AuthProvider, Protected Routes** (JWT auth etc.) | **Keine Auth nötig**<br/>Alles öffentlich. | Entferne `<AuthProvider>` aus RootLayout und alle Login-bezogenen UI. Landing Pages brauchen keinen Login. Falls ASTRA einen „Login“ Link haben soll (z.B. zur Plattform, falls die App woanders läuft), dann einfach als normaler Link auf externes Portal. |
 | **Backend API Calls** (SWR, fetch to Django API) | **Keine API**<br/>Nur statischer Inhalt. | Sämtliche API-Client und SWR Hooks werden nicht gebraucht. Kann komplett entfallen. Somit auch keine `useSWR` oder Datenfetching in Pages (nur evtl. zum Build-Time fetchen, aber hier unnötig – Content ist lokal). |
 | **Formulare** (z.B. FundMe hatte Projekt erstellen Form etc.) | **Kontakt-/Newsletter-Formular** (optional) | FundMe’s form handling (falls custom) kann als Inspiration dienen, aber unsere static Site hat kein eigenes Backend. Wenn ein Formular (z.B. Newsletter Email) gewünscht ist, nutzen wir einen Drittanbieter (siehe Abschnitt 8). Den Code dafür neu schreiben (z.B. fetch an externe API). |
@@ -659,7 +659,7 @@ Da der FundMe-Frontend-Prototyp als Grundlage dient, planen wir die Wiederverwen
 **Empfohlene Refactor-Reihenfolge:**
 1. **Repo Setup & Extract:** Zunächst Monorepo aufsetzen, Tailwind + Next in beiden Apps lauffähig machen. Dann aus FundMe die UI-Kernteile extrahieren (Globals.css, components/ui) ins Shared-Package. Lokal testen, dass eine Dummy-Seite gerendert wird mit dem Theme (z.B. ein Button in der Seite, um Styles zu prüfen).
 2. **Remove Unneeded:** Bereinigen des extrahierten Codes von allen FundMe-spezifischen Dingen (Auth, Zustand, etc.). Ziel: Schlankes, reines Design System.
-3. **Neue Pages aufbauen:** Implementieren der Olivebytes und ASTRA Seitenstrukturen (Routing mit [locale], dummy Content). Schrittweise die Komponenten (Hero etc.) aus FundMe adaptieren und einsetzen. Hier am Anfang Platzhaltertexte, Hauptsache Layout stimmt.
+3. **Neue Pages aufbauen:** Implementieren der cloudeteer-chat und ASTRA Seitenstrukturen (Routing mit [locale], dummy Content). Schrittweise die Komponenten (Hero etc.) aus FundMe adaptieren und einsetzen. Hier am Anfang Platzhaltertexte, Hauptsache Layout stimmt.
 4. **Content einpflegen:** JSON/Text-Inhalte für DE/EN ausarbeiten (ggf. mit Fachexperten). Diese in das Content-System übernehmen. Seiten nun mit echten Inhalten rendern.
 5. **SEO & Legal einfügen:** Titel/Meta via Next Metadata API hinzufügen. Impressum/Datenschutz Seiten erstellen (Inhalt eventuell von Jurist prüfen lassen). Footer-Links setzen.
 6. **Testing & Finetuning:** Design-Überprüfung (Abstände, Responsivität), Lighthouse/Axe laufen lassen. Farben auf Kontrast prüfen (ggf. kleine Tweaks im Theme falls nötig). 
@@ -709,7 +709,7 @@ Ziel: **Lighthouse Performance ~100** auf Desktop, ~90+ auf Mobile.
 Falls wir ein **Kontaktformular** oder *Newsletter Sign-up* auf der Seite anbieten:
 - Da wir keinen eigenen Backendserver haben, müssen wir externe Dienste nutzen. Möglichkeiten:
   - **Formspree** oder **Getform**: einfache Form endpoints, wo unser `<form>` per POST hinsendet und der Service uns eine Email oder speichert. Man muss lediglich die Endpoint-URL eintragen. DSGVO: Formspree hat EU Endpunkte (muss man prüfen).
-  - **Static Email**: Als Minimalversion kann der „Absenden“ Button auch einfach `mailto:info@olivebytes.org` öffnen – das delegiert an das Mailprogramm des Nutzers (nicht UX-optimal, aber datenschutzneutral).
+  - **Static Email**: Als Minimalversion kann der „Absenden“ Button auch einfach `mailto:info@cloudeteer-chat.org` öffnen – das delegiert an das Mailprogramm des Nutzers (nicht UX-optimal, aber datenschutzneutral).
   - **Google Forms / Airtable form**: embed ein extern gehostetes Formular – wahrscheinlich unschön im Erscheinungsbild.
   - **Netlify Forms**: Funktioniert nur auf Netlify Hosting; wir bleiben bei GH Pages, also nein.
 - **Keine Speicherung im Repo:** Sensible Daten wollen wir nicht in GitHub laufen lassen. Also keine Action, die Form-Daten als Issue speichert oder so (gibt solche Hacks, aber lieber nicht).
@@ -746,7 +746,7 @@ Obwohl GitHub Pages eine geeignete Plattform ist, sollten wir mögliche Risiken 
 - **Domain & HTTPS**: GitHub Pages generiert kostenlos Zertifikate. Das ist gut, jedoch kann *Let's Encrypt Rate Limit* zum Thema werden, wenn wir Domains oft neu verbinden. Also Domain einmal einrichten und lassen. 
 
 **Alternativen:**
-- **Vercel:** Als Macher von Next.js ideal. Vorteile: Einfaches Deploy per Push, Preview-URLs für jede PR automatisch, erstklassige Next.js Support (z.B. Internationalized Routing out of the box, falls SSR). Nachteil: Custom Domain + Multi-Zone Setup (zwei Sites) wäre möglich, aber vermutlich bräuchte ASTRA und Olivebytes entweder zwei Projekte oder als eine Next.js App mit multi-domain config (Vercel kann Domain nach Wunsch auf verschiedene rewrites mappen, aber komplex). Kosten: Für unser Use-Case im Rahmen der Hobby/Small tier kostenlos (aber Pageviews limit beachten). DSGVO: Vercel ist US, aber hat Rechenzentren global. Man kann `vercel.json` Regions EU setzen.
+- **Vercel:** Als Macher von Next.js ideal. Vorteile: Einfaches Deploy per Push, Preview-URLs für jede PR automatisch, erstklassige Next.js Support (z.B. Internationalized Routing out of the box, falls SSR). Nachteil: Custom Domain + Multi-Zone Setup (zwei Sites) wäre möglich, aber vermutlich bräuchte ASTRA und cloudeteer-chat entweder zwei Projekte oder als eine Next.js App mit multi-domain config (Vercel kann Domain nach Wunsch auf verschiedene rewrites mappen, aber komplex). Kosten: Für unser Use-Case im Rahmen der Hobby/Small tier kostenlos (aber Pageviews limit beachten). DSGVO: Vercel ist US, aber hat Rechenzentren global. Man kann `vercel.json` Regions EU setzen.
 - **Netlify:** Ähnlich wie Vercel, spezialisiert auf Static Sites. Vorteil: eingebaute Form-Handlings (könnte unser Kontaktformular mit speichern), Identity widgets usw. Auch hier Preview deploys super einfach. Kosten: Free tier reicht oft. 
 - **Cloudflare Pages:** Sehr interessanter Kandidat: Cloudflare hat globale Edge-Infrastruktur, Deploy via git push, sehr schnell. Zudem kann Cloudflare Pages *via Functions* auch kleine SSR/Backend-Sachen ermöglichen, falls nötig. Daten bleiben weitgehend in Cloudflare (die haben auch EU presence).
 - **Selbst gehostet (z.B. S3 + CloudFront):** Könnte man machen, aber unnötig administrativer Aufwand. GitHub Pages ist schon managed.
@@ -756,7 +756,7 @@ Obwohl GitHub Pages eine geeignete Plattform ist, sollten wir mögliche Risiken 
 - Cloudflare: extrem schnelle Auslieferung (Argo/Workers KV etc. für advanced stuff).
 - Vercel: tiefe Next.js Integration (Falls wir z.B. doch SSR bräuchten oder API Routes für irgendeine Funktion).
 
-Ein Risiko speziell: **Search Indexing** – Die Seiten sind neu, evtl. dauert es bis Google sie rankt. Das hat mit Hosting wenig zu tun, aber wir sollten eine **Google Search Console** Property einrichten für olivebytes.org und astra.olivebytes.org, die Sitemaps einreichen, um Indexierung zu beschleunigen.
+Ein Risiko speziell: **Search Indexing** – Die Seiten sind neu, evtl. dauert es bis Google sie rankt. Das hat mit Hosting wenig zu tun, aber wir sollten eine **Google Search Console** Property einrichten für cloudeteer-chat.org und astra.cloudeteer-chat.org, die Sitemaps einreichen, um Indexierung zu beschleunigen.
 
 **Domain takeover Sicherheit:** Wenn ein DNS-Eintrag auf Pages zeigt, muss das Repo die Domain verifiziert haben, sonst besteht theoretisch die Gefahr von Übernahmen. Wir machen das korrekt über Settings + CNAME, also safe. (Im DNS keine Wildcards verwenden, warnt GH).
 
@@ -885,7 +885,7 @@ Hier sehen wir konkret die Verwendung der Farb-Tokens (`bg-background`, `text-fo
 
 ### GitHub Actions Workflow (bereits oben ausführlich in Abschnitt 5)
 
-Die YAML-Dateien für Olivebytes und ASTRA wurden bereits gezeigt. Man würde sie so in `.github/workflows` ablegen. Wichtig ist noch, im Repository die Pages zu konfigurieren:
+Die YAML-Dateien für cloudeteer-chat und ASTRA wurden bereits gezeigt. Man würde sie so in `.github/workflows` ablegen. Wichtig ist noch, im Repository die Pages zu konfigurieren:
 - Bei Verwendung von `actions/deploy-pages`, erstellt GitHub nach dem ersten erfolgreichen Run automatisch eine `gh-pages` Umgebungs-Branch und setzt diese als Pages Quelle. Wir können im Repo-Settings nachsehen, ob es geklappt hat.
 - Die `permissions: pages: write` und `id-token: write` sind erforderlich, damit der Actions-Deploy sich authentifizieren kann (OpenID Connect token).
 
@@ -895,33 +895,33 @@ Die YAML-Dateien für Olivebytes und ASTRA wurden bereits gezeigt. Man würde si
 ```
 User-agent: *
 Allow: /
-Sitemap: https://olivebytes.org/sitemap.xml
+Sitemap: https://cloudeteer-chat.org/sitemap.xml
 ```
 Bei zwei Domains entweder zwei Sitemaps (eine pro Domain) verlinken, oder eine kombiniert (wobei Google das Domainübergreifend verstehen sollte). Besser pro Domain getrennt:
-- olivebytes.org/robots.txt listet olivebytes Sitemap.
-- astra.olivebytes.org/robots.txt listet astra Sitemap.
+- cloudeteer-chat.org/robots.txt listet cloudeteer-chat Sitemap.
+- astra.cloudeteer-chat.org/robots.txt listet astra Sitemap.
 Dafür legen wir zwei `robots.txt` in jeweiligen public Ordnern der Apps ab.
 
-**sitemap.xml:** Generieren wir am einfachsten selbst, da nur wenige URLs. Z.B. für Olivebytes:
+**sitemap.xml:** Generieren wir am einfachsten selbst, da nur wenige URLs. Z.B. für cloudeteer-chat:
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://olivebytes.org/</loc><changefreq>monthly</changefreq></url>
-  <url><loc>https://olivebytes.org/en/</loc><changefreq>monthly</changefreq></url>
-  <url><loc>https://olivebytes.org/impressum</loc><changefreq>yearly</changefreq></url>
-  <url><loc>https://olivebytes.org/datenschutz</loc><changefreq>yearly</changefreq></url>
+  <url><loc>https://cloudeteer-chat.org/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://cloudeteer-chat.org/en/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://cloudeteer-chat.org/impressum</loc><changefreq>yearly</changefreq></url>
+  <url><loc>https://cloudeteer-chat.org/datenschutz</loc><changefreq>yearly</changefreq></url>
 </urlset>
 ```
-Astra analog (mit astra.olivebytes.org base und den Pfaden `/en/`, `/de/`, `/imprint`, `/privacy`). Diese Dateien kommen in `public/` der jeweiligen App, damit Next sie beim Export rauslegt.
+Astra analog (mit astra.cloudeteer-chat.org base und den Pfaden `/en/`, `/de/`, `/imprint`, `/privacy`). Diese Dateien kommen in `public/` der jeweiligen App, damit Next sie beim Export rauslegt.
 
 **Impressum/Datenschutz Seiten:** Geben wir als Markdown/JSX, z.B. `app/[locale]/impressum/page.tsx`:
 ```tsx
-export const metadata = { title: "Impressum - Olivebytes" };
+export const metadata = { title: "Impressum - cloudeteer-chat" };
 export default function ImpressumPage() {
   return <main className="prose mx-auto p-6">
     <h1>Impressum</h1>
     <p>Angaben gemäß §5 TMG:</p>
-    <p>Olivebytes GmbH<br/>Musterstraße 1<br/>12345 Berlin<br/>...</p>
+    <p>cloudeteer-chat GmbH<br/>Musterstraße 1<br/>12345 Berlin<br/>...</p>
     <h2>Kontakt</h2>
     <p>Telefon: ...<br/>E-Mail: ...</p>
     <h2>Verantwortlich für den Inhalt</h2>
@@ -938,10 +938,10 @@ Zum Abschluss ein Vorschlag für die README-Dateien, damit das Team die Projekte
 
 **Root README (Monorepo):**
 ```markdown
-# Olivebytes & ASTRA Landing Pages Monorepo
+# cloudeteer-chat & ASTRA Landing Pages Monorepo
 
 Dieses Repository enthält die Quellcodes für zwei statisch generierte Landing Pages:
-- **Olivebytes Unternehmensseite** (Next.js App in `apps/olivebytes-site`)
+- **cloudeteer-chat Unternehmensseite** (Next.js App in `apps/cloudeteer-chat-site`)
 - **ASTRA Produktseite** (Next.js App in `apps/astra-site`)
 
 Beide Seiten werden mit Next.js 15 (App Router) und Tailwind CSS umgesetzt und via GitHub Pages veröffentlicht.
@@ -952,7 +952,7 @@ Voraussetzungen: Node.js 18+, PNPM (oder npm).
 
 - **Installieren:** `pnpm install`
 - **Entwicklung starten:** 
-  - Olivebytes-Seite: `pnpm dev:olivebytes` (startet auf http://localhost:3000)
+  - cloudeteer-chat-Seite: `pnpm dev:cloudeteer-chat` (startet auf http://localhost:3000)
   - ASTRA-Seite: `pnpm dev:astra` (startet auf http://localhost:3001, z.B. via `PORT=3001`)
 - **Alle Linter & Tests:** `pnpm test` (führt ESLint, etc. aus)
 
@@ -962,8 +962,8 @@ Während der Entwicklung liegen die Seiten unter den oben genannten Ports jeweil
 
 ```
 apps/
-  olivebytes-site/   - Next.js App für olivebytes.org
-  astra-site/        - Next.js App für astra.olivebytes.org
+  cloudeteer-chat-site/   - Next.js App für cloudeteer-chat.org
+  astra-site/        - Next.js App für astra.cloudeteer-chat.org
 packages/
   ui/                - Gemeinsame UI-Komponenten, Styles, Design Tokens
 ```
@@ -973,19 +973,19 @@ Jede App hat einen `src/app` Ordner mit den Seiten (DE/EN), sowie ggf. `src/comp
 ## Deployment
 
 Deployments laufen automatisch über GitHub Actions beim Push auf `main`. Siehe `.github/workflows/*-pages.yml`. Die Seiten werden auf GitHub Pages veröffentlicht:
-- Olivebytes: https://olivebytes.org
-- ASTRA: https://astra.olivebytes.org
+- cloudeteer-chat: https://cloudeteer-chat.org
+- ASTRA: https://astra.cloudeteer-chat.org
 
 ## Lizenz & Kontakt
 
-(C) 2025 Olivebytes. Alle Inhalte sind urheberrechtlich geschützt. Bei Fragen wenden Sie sich an info@olivebytes.org.
+(C) 2025 cloudeteer-chat. Alle Inhalte sind urheberrechtlich geschützt. Bei Fragen wenden Sie sich an info@cloudeteer-chat.org.
 ```
 
 **Package/Project-specific README (z.B. ASTRA site):**
 ```markdown
 # ASTRA Landing Page
 
-Dies ist die Codebasis für die ASTRA Plattform Landing Page (https://astra.olivebytes.org).
+Dies ist die Codebasis für die ASTRA Plattform Landing Page (https://astra.cloudeteer-chat.org).
 
 ## Verzeichnisstruktur
 
@@ -995,7 +995,7 @@ Dies ist die Codebasis für die ASTRA Plattform Landing Page (https://astra.oliv
 
 ## Entwicklung
 
-- `pnpm dev:astra` – startet lokale Entwicklungs-Server auf Port 3000 (sofern Olivebytes Seite nicht parallel läuft).
+- `pnpm dev:astra` – startet lokale Entwicklungs-Server auf Port 3000 (sofern cloudeteer-chat Seite nicht parallel läuft).
 - Zum Testen anderer Sprache: Anhängen von `/en` oder `/de` im Browser.
 
 Inhalte (Texte) sind ausgelagert in JSON-Dateien unter `src/content/`:
@@ -1006,7 +1006,7 @@ Diese werden in den Komponenten importiert und entsprechend gerendert.
 
 ## Technologie
 
-Gebaut mit Next.js 15 (App Router, static export). Das Styling erfolgt mit Tailwind CSS und dem gemeinsamen Olivebytes Design System (siehe `packages/ui`).
+Gebaut mit Next.js 15 (App Router, static export). Das Styling erfolgt mit Tailwind CSS und dem gemeinsamen cloudeteer-chat Design System (siehe `packages/ui`).
 
 ## Deployment
 
@@ -1014,7 +1014,7 @@ Der statische Export erfolgt via GitHub Actions (siehe Haupt-README). Änderunge
 
 ```
 
-*(Ähnlich würde eine README für Olivebytes Seite aussehen.)*
+*(Ähnlich würde eine README für cloudeteer-chat Seite aussehen.)*
 
 Die READMEs sorgen dafür, dass künftige Entwickler oder Maintainer schnell verstehen, wie sie lokal arbeiten, wo Inhalte liegen und wie der Deployment-Flow ist.
 
