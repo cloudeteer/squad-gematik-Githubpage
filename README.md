@@ -1,68 +1,118 @@
-# Olivebytes Landing Page
+# Cloudetair Chat - Landing Page
 
-A simple, modern landing page for Olivebytes - European AI & Open-Core Solutions, inspired by the FundMe frontend design patterns.
+Eine moderne, statische Landing Page für Cloudetair Chat, die sichere KI-Plattform der Cloudeteer GmbH.
 
-## Features
+## Über Cloudetair Chat
 
-- ✅ **Static Export**: Optimized for GitHub Pages deployment with `next export`
-- ✅ **Responsive Design**: Mobile-first approach using Tailwind CSS
-- ✅ **Dark/Light Mode**: Theme switching with next-themes
-- ✅ **Modern UI Components**: Inspired by shadcn/ui design system
-- ✅ **SEO Optimized**: Complete meta tags, sitemap, and robots.txt
-- ✅ **GDPR Compliant**: No external fonts or trackers, local assets only
-- ✅ **Performance Optimized**: Minimal JavaScript, static HTML generation
+Cloudetair Chat ist eine DSGVO-konforme KI-Plattform mit umfassenden Funktionen für:
+- Retrieval-Augmented Generation (RAG)
+- Multimodale Eingaben (Speech-to-Text, Bilder, Videos)
+- Integration in Microsoft Teams und Atlassian
+- Prompt-Management und Wissensmanagement
+- Bildgenerierung und -analyse
+- Deutschsprachiger Support
+
+Entwickelt von der **Cloudeteer GmbH**, dem spezialisierten Cloud-Only-Dienstleister aus Hamburg (ISO 27001 zertifiziert).
+
+## Features der Website
+
+- ✅ **Static Export**: Optimiert für GitHub Pages Deployment
+- ✅ **Responsive Design**: Mobile-first mit Tailwind CSS
+- ✅ **Dark/Light Mode**: Theme-Wechsel mit next-themes
+- ✅ **Video-Platzhalter**: Bereiche für Schulungs- und Demo-Videos
+- ✅ **SEO Optimiert**: Vollständige Meta-Tags, Sitemap, robots.txt
+- ✅ **GDPR Konform**: Keine externen Fonts oder Tracker
+- ✅ **Performance**: Minimales JavaScript, statische HTML-Generierung
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 (App Router)
-- **Styling**: Tailwind CSS with CSS custom properties
+- **Styling**: Tailwind CSS mit CSS Custom Properties
 - **Icons**: Lucide React
-- **Theme**: next-themes for dark/light mode switching
-- **Deployment**: GitHub Pages with static export
+- **Theme**: next-themes für Dark/Light Mode
+- **Deployment**: GitHub Pages mit Static Export
 
-## Design Inspiration
+## Content-Struktur
 
-This landing page draws design patterns from the FundMe frontend, specifically:
-- Color scheme and CSS custom properties for theming
-- Component structure (Hero, Features, CTA sections)
-- Button variants and styling patterns
-- Responsive navigation with theme toggle
-- Professional gradient backgrounds
+Die Landing Page präsentiert Cloudetair Chat mit:
+- **Hero Section**: Haupttitel und Call-to-Action
+- **Features Section**: Alle 50+ Funktionen gem. Anforderungskatalog
+- **About Section**: Cloudeteer GmbH Vorstellung
+- **Video Section**: Platzhalter für Demo- und Schulungsvideos
+- **CTA Section**: Kontakt und Demo-Anforderung
+- **Footer**: Impressum, Datenschutz, Kontakt
 
-## Content Structure
+## Impressum & Rechtliches
 
-The landing page showcases Olivebytes as:
-- **European AI Solutions Provider**: Focus on EU sovereignty and GDPR compliance
-- **Explainable AI Expert**: Transparent, understandable AI systems
-- **Open-Core Pioneer**: Open source technology with commercial support
-- **SME & Public Sector Focused**: Tailored for mid-market and government
+**Cloudeteer GmbH**  
+Brandshofer Deich 68  
+20539 Hamburg  
+Deutschland
+
+- Geschäftsführer: Marc Sundermann und Oliver Möhl
+- Handelsregister: HRB 155873, Amtsgericht Hamburg
+- USt-IdNr.: DE316437624
+- ISO 27001 zertifiziert
 
 ## Development
 
 ```bash
-# Install dependencies
-npm install
+# Abhängigkeiten installieren
+pnpm install
 
-# Start development server
-npm run dev
+# Development Server starten
+pnpm dev
 
-# Build for production
-npm run build
+# Für Produktion bauen
+pnpm build
+
+# Statischen Export erstellen
+pnpm export
 ```
 
-## Deploying to GitHub Pages
+## Deployment auf GitHub Pages
 
-This template is pre-configured for GitHub Pages deployment:
+Die Seite ist für GitHub Pages vorkonfiguriert:
 
-1. Push your code to the `main` branch
-2. Go to **Settings** > **Pages** > **Source**, and choose **GitHub Actions**
-3. The site will automatically build and deploy
+1. Code zum `main` Branch pushen
+2. Gehe zu **Settings** > **Pages** > **Source**, und wähle **GitHub Actions**
+3. Die Seite wird automatisch gebaut und deployed
 
-The site will be available at: `https://<username>.github.io/website-olivebytes/`
+Die Seite ist verfügbar unter: `https://<username>.github.io/website-olivebytes/`
 
-## SEO & Analytics
+## Implementierte Anforderungen
 
-- Complete OpenGraph and Twitter meta tags
+Die Plattform erfüllt folgende Hauptanforderungen:
+
+### Kern-Funktionen (S1-S11)
+- **S1**: RAG (Retrieval-Augmented Generation)
+- **S2.1**: FAQ-Management für lizenzierte Nutzer
+- **S3.1-S3.3**: Chat-Sharing, Prompt-Templates, Textvorschläge
+- **S4.1-S4.2**: Speech-to-Text & Text-to-Speech
+- **S5.1-S5.7**: Connectors (Teams, Atlassian, Vektordatenbanken, MCP, Datei-Uploads)
+- **S6.1-S6.7**: Multimodale Features (Bilderkennung, Bildgenerierung, Video-Analyse, Übersetzung, Präsentationen)
+- **S9.1-S9.3**: Admin-Funktionen (LLM-Zugriffskontrolle, CI-Integration, Daten-Aufbewahrung)
+- **S10**: IDE-Integration (VS Code, IntelliJ)
+- **S11.1-S11.2**: Fehlerbehandlung & eLearning-Videos
+
+### Performance & Sicherheit
+- **300.8.1**: OWASP-konforme Sicherheit
+- **500.3.1**: Performance-SLA (~1s Dialog, ~40s Auswertungen)
+
+### Support
+- **800.3**: Deutschsprachiger Support (E-Mail & Telefon)
+- **800.5.2**: Webbasiertes Kundenportal für Ticket-Management
+
+## Kontakt
+
+**Cloudeteer GmbH**  
+E-Mail: legal@cloudeteer.de  
+Telefon: +49 40 271644-00  
+Web: https://www.cloudeteer.de
+
+## Lizenz
+
+© 2025 Cloudeteer GmbH. Alle Rechte vorbehalten.
 - Sitemap.xml and robots.txt included
 - Ready for privacy-compliant analytics (Plausible recommended)
 - No tracking cookies or external requests

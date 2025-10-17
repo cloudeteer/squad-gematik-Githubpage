@@ -44,13 +44,19 @@ export const Navbar = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="text-2xl font-bold">
-              <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                Olivebytes
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Cloudetair Chat
               </span>
             </div>
 
             {/* Navigation Links - Desktop */}
             <div className="hidden md:flex items-center space-x-8">
+              <a 
+                href="#features" 
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Funktionen
+              </a>
               <a 
                 href="#about" 
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -58,13 +64,13 @@ export const Navbar = () => {
                 Über uns
               </a>
               <a 
-                href="#projects" 
+                href="#videos" 
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
-                Projekte
+                Videos
               </a>
               <a 
-                href="mailto:info@olivebytes.org?subject=Kontaktaufnahme mit Olivebytes&body=Guten Tag,%0D%0A%0D%0AIch würde gerne mehr über Olivebytes erfahren.%0D%0A%0D%0AMit freundlichen Grüßen" 
+                href="mailto:legal@cloudeteer.de?subject=Kontaktaufnahme - Cloudetair Chat&body=Guten Tag,%0D%0A%0D%0AIch würde gerne mehr über Cloudetair Chat erfahren.%0D%0A%0D%0AMit freundlichen Grüßen" 
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Kontakt
@@ -96,8 +102,8 @@ export const Navbar = () => {
                 <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                   <SheetHeader>
                     <SheetTitle className="text-left">
-                      <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                        Olivebytes
+                      <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                        Cloudetair Chat
                       </span>
                     </SheetTitle>
                     <SheetDescription className="text-left text-muted-foreground">
@@ -106,6 +112,13 @@ export const Navbar = () => {
                   </SheetHeader>
                   <div className="flex flex-col gap-6 mt-8">
                     <a 
+                      href="#features" 
+                      className="text-lg font-medium hover:text-primary transition-colors"
+                      onClick={handleLinkClick}
+                    >
+                      Funktionen
+                    </a>
+                    <a 
                       href="#about" 
                       className="text-lg font-medium hover:text-primary transition-colors"
                       onClick={handleLinkClick}
@@ -113,14 +126,14 @@ export const Navbar = () => {
                       Über uns
                     </a>
                     <a 
-                      href="#projects" 
+                      href="#videos" 
                       className="text-lg font-medium hover:text-primary transition-colors"
                       onClick={handleLinkClick}
                     >
-                      Projekte
+                      Videos
                     </a>
                     <a 
-                      href="mailto:info@olivebytes.org?subject=Kontaktaufnahme mit Olivebytes&body=Guten Tag,%0D%0A%0D%0AIch würde gerne mehr über Olivebytes erfahren.%0D%0A%0D%0AMit freundlichen Grüßen" 
+                      href="mailto:legal@cloudeteer.de?subject=Kontaktaufnahme - Cloudetair Chat&body=Guten Tag,%0D%0A%0D%0AIch würde gerne mehr über Cloudetair Chat erfahren.%0D%0A%0D%0AMit freundlichen Grüßen" 
                       className="text-lg font-medium hover:text-primary transition-colors"
                       onClick={handleLinkClick}
                     >

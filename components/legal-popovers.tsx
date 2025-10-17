@@ -23,27 +23,27 @@ export function ImpressumPopover() {
             
             <div className="space-y-3">
               <div>
-                <h4 className="font-medium">Angaben gemäß § 5 DDG</h4>
+                <h4 className="font-medium">Angaben gemäß § 5 TMG</h4>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Marinho Krieg<br />
-                  Wilhelmstraße 6<br />
-                  10963 Berlin<br />
+                  CLOUDETEER GmbH<br />
+                  Brandshofer Deich 68<br />
+                  20539 Hamburg<br />
                   Deutschland
-                </p>
-              </div>
-
-              <div>
-                <h4 className="font-medium">Kontakt</h4>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Telefon: <br />
-                  E-Mail: info[at]olivebytes.org
                 </p>
               </div>
 
               <div>
                 <h4 className="font-medium">Vertreten durch</h4>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Geschäftsführer: Marinho Krieg
+                  Geschäftsführer: Marc Sundermann und Oliver Möhl
+                </p>
+              </div>
+
+              <div>
+                <h4 className="font-medium">Kontakt</h4>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Telefon: +49 40 271644-00<br />
+                  E-Mail: legal[at]cloudeteer.de
                 </p>
               </div>
 
@@ -51,8 +51,8 @@ export function ImpressumPopover() {
                 <h4 className="font-medium">Registereintrag</h4>
                 <p className="text-sm text-muted-foreground mt-1">
                   Eintragung im Handelsregister<br />
-                  Registergericht: Amtsgericht Charlottenburg<br />
-                  Registernummer: in Gründung
+                  Registergericht: Amtsgericht Hamburg<br />
+                  Registernummer: HRB 155873
                 </p>
               </div>
 
@@ -60,16 +60,7 @@ export function ImpressumPopover() {
                 <h4 className="font-medium">Umsatzsteuer-ID</h4>
                 <p className="text-sm text-muted-foreground mt-1">
                   Umsatzsteuer-Identifikationsnummer gemäß § 27 a UStG:<br />
-                  In Gründung
-                </p>
-              </div>
-
-              <div>
-                <h4 className="font-medium">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h4>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Marinho Krieg<br />
-                  Wilhelmstraße 6<br />
-                  10963 Berlin
+                  DE316437624
                 </p>
               </div>
 
@@ -78,7 +69,7 @@ export function ImpressumPopover() {
                 <p className="text-sm text-muted-foreground mt-1">
                   Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den 
                   allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht 
-                  unter der Verpflichtung, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach 
+                  verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach 
                   Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.
                 </p>
               </div>
@@ -98,6 +89,16 @@ export function ImpressumPopover() {
                   Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen 
                   Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der 
                   Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.
+                </p>
+              </div>
+
+              <div>
+                <h4 className="font-medium">Streitschlichtung</h4>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:<br />
+                  <a href="http://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    http://ec.europa.eu/consumers/odr/
+                  </a>
                 </p>
               </div>
             </div>
@@ -136,12 +137,13 @@ export function DatenschutzPopover() {
                 <h4 className="font-medium">2. Verantwortliche Stelle</h4>
                 <p className="text-sm text-muted-foreground mt-1">
                   Verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:<br /><br />
-                  Olivebytes UG (haftungsbeschränkt)<br />
-                  Marinho Krieg<br />
-                  Wilhelmstraße 6<br />
-                  10963 Berlin<br />
+                  CLOUDETEER GmbH<br />
+                  Marc Sundermann und Oliver Möhl<br />
+                  Brandshofer Deich 68<br />
+                  20539 Hamburg<br />
                   Deutschland<br />
-                  E-Mail: info[at]olivebytes.org<br />
+                  E-Mail: legal[at]cloudeteer.de<br />
+                  Telefon: +49 40 271644-00
                 </p>
               </div>
 
